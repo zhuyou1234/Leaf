@@ -30,7 +30,6 @@ public class SnowflakeIDGenImpl implements IDGen {
     private long sequence = 0L;
     private long lastTimestamp = -1L;
     public boolean initFlag = false;
-    private static final Random RANDOM = new Random();
     private int port;
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
@@ -70,12 +69,11 @@ public class SnowflakeIDGenImpl implements IDGen {
             sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
                 //seq 为0的时候表示是下一毫秒时间开始对seq做随机
-                sequence = RANDOM.nextInt(100);
                 timestamp = tilNextMillis(lastTimestamp);
             }
         } else {
             //如果是新的ms开始
-            sequence = RANDOM.nextInt(100);
+            sequence = 0;
         }
         lastTimestamp = timestamp;
         long id = ((timestamp - twepoch) << timestampLeftShift) | (workerId << workerIdShift) | sequence;
